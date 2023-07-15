@@ -3,7 +3,7 @@ import { MouseEvent, useState } from "react";
 import Paper from "@mui/material/Paper";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import { Box, LinearProgress, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { Input } from "./Input";
 import { useGetContactPage } from "../hooks/useGetContactPage";
 
@@ -48,16 +48,29 @@ export const UrlInput = () => {
             onChange={setUrl}
             disabled={isLoading}
           />
-          <IconButton type="submit" sx={{ p: "10px" }} onClick={onSubmit}>
+          <IconButton
+            type="submit"
+            sx={{ p: "10px" }}
+            onClick={onSubmit}
+            disabled={isLoading}
+          >
             <SearchIcon />
           </IconButton>
         </Paper>
       </Box>
-      {isLoading && <LinearProgress />}
-      {!!error && <Typography>Error retrieving data</Typography>}
-      {!!scrapedData && (
-        <Typography>Received data: {JSON.stringify(scrapedData)}</Typography>
-      )}
+      <Box
+        gap={2}
+        display="flex"
+        flexDirection={"column"}
+        alignItems={"center"}
+        paddingX={3}
+      >
+        {isLoading && <CircularProgress />}
+        {!!error && <Typography>Error retrieving data</Typography>}
+        {!!scrapedData && (
+          <Typography>Received data: {JSON.stringify(scrapedData)}</Typography>
+        )}
+      </Box>
     </Box>
   );
 };
