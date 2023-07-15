@@ -11,5 +11,6 @@ npm install
 ## Usage
 
 ```bash
+cp .env.template .env
 npm run dev
 ```

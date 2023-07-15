@@ -16,6 +16,7 @@ export const useFetchData = <T>({ enabled, fetchData }: Props<T>) => {
     }
 
     const loadData = async () => {
+      setIsLoading(true);
       try {
         const data = await fetchData();
 
