@@ -20,6 +20,10 @@ app.use(express.json());
 app.get("/find_contact_page", async (req, res, next) => {
   const { url, google_sheet_id } = req.query || {};
 
+  if (!url) {
+    return next(new Error("Url parameter missing"));
+  }
+
   try {
     const data = await scrapeContactInfo(url);
     google_sheet_id &&
