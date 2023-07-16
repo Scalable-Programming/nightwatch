@@ -85,7 +85,7 @@ async function scrapeContactInfo(url) {
     return result;
   }
 
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
   try {
@@ -161,10 +161,4 @@ function isValidURL(url) {
   }
 }
 
-const websiteURL = "https://www.result.si";
-
-scrapeContactInfo(websiteURL)
-  .then(console.log)
-  .catch((error) => {
-    console.error("An error occurred:", error);
-  });
+module.exports = scrapeContactInfo;

@@ -1,36 +1,71 @@
 import { useEffect, useState } from "react";
+import { AbortError } from "../errors";
 
 interface Props<T> {
-  enabled: boolean;
-  fetchData: () => Promise<T>;
+  fetchData: (signal: AbortSignal) => Promise<T>;
 }
 
-export const useFetchData = <T>({ enabled, fetchData }: Props<T>) => {
+interface SetDataProps<T> {
+  isLoading?: boolean;
+  error?: Error;
+  data?: T;
+}
+
+let abortController: AbortController | undefined;
+
+export const useFetchData = <T>({ fetchData }: Props<T>) => {
   const [error, setError] = useState<Error>();
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<T>();
 
   useEffect(() => {
-    if (!enabled) {
-      return;
-    }
-
-    const loadData = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchData();
-
-        setData(data);
-        setIsLoading(false);
-        setError(undefined);
-      } catch (err) {
-        setIsLoading(false);
-        setError(err as Error);
+    return () => {
+      if (abortController) {
+        abortController.abort();
+        abortController = undefined;
       }
     };
+  }, [fetchData]);
 
-    void loadData();
-  }, [enabled, fetchData]);
+  const setStateData = ({
+    data,
+    error,
+    isLoading = false,
+  }: SetDataProps<T>) => {
+    setIsLoading(isLoading);
+    setError(error);
+    setData(data);
+  };
 
-  return { error, isLoading, data };
+  
+  const loadData = async () => {
+    if (abortController) {
+      abortController.abort();
+      abortController = undefined;
+    }
+
+    setStateData({ isLoading: true });
+
+    if (!abortController) {
+      abortController = new AbortController();
+    }
+
+    try {
+      const data = await fetchData(abortController.signal);
+
+      setStateData({ data });
+    } catch (err) {
+      setStateData({
+        error: err instanceof AbortError ? undefined : (err as Error),
+      });
+    }
+  };
+
+  return {
+    error,
+    isLoading,
+    data,
+    resetData: () => setStateData({}),
+    loadData,
+  };
 };

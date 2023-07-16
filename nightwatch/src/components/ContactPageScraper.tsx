@@ -7,21 +7,30 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import { Input } from "./Input";
 import { useGetContactPage } from "../hooks/useGetContactPage";
 
-export const UrlInput = () => {
+export const ContactPageScraper = () => {
+  const [sheetId, setSheetId] = useState("");
   const [url, setUrl] = useState("");
-  const [urlToFetch, setUrlToFetch] = useState("");
 
   const {
     data: scrapedData,
     isLoading,
     error,
-  } = useGetContactPage(urlToFetch.trim());
+    resetData,
+    loadData,
+  } = useGetContactPage(url.trim(), sheetId.trim());
 
   const onSubmit = (
     e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
   ) => {
     e.preventDefault();
-    setUrlToFetch(url);
+    void loadData();
+  };
+
+  const onChange = (callback: (newValue: string) => void) => {
+    return (newValue: string) => {
+      resetData();
+      callback(newValue);
+    };
   };
 
   return (
@@ -39,20 +48,26 @@ export const UrlInput = () => {
             p: "2px 4px",
             display: "flex",
             alignItems: "center",
-            width: 400,
+            width: "60%",
           }}
         >
           <Input
             placeholder="Insert url to scrape"
             value={url}
-            onChange={setUrl}
+            onChange={onChange(setUrl)}
+            disabled={isLoading}
+          />
+          <Input
+            placeholder="Insert google sheet id"
+            value={sheetId}
+            onChange={onChange(setSheetId)}
             disabled={isLoading}
           />
           <IconButton
             type="submit"
             sx={{ p: "10px" }}
             onClick={onSubmit}
-            disabled={isLoading}
+            disabled={isLoading || !url.trim()}
           >
             <SearchIcon />
           </IconButton>

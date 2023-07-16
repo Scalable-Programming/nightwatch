@@ -1,16 +1,19 @@
 import { config } from "../../config";
-import { NetworkError } from "../../errors";
+import { AbortError, NetworkError } from "../../errors";
 import { mapApiResponseToResponse } from "./mapping";
 import { ContactPageApiResponse, ContactPageResponse } from "./types";
 
 export const fetchContactPage = async (
-  url: string
+  url: string,
+  sheetId: string,
+  signal: AbortSignal
 ): Promise<ContactPageResponse> => {
-  const searchParams = new URLSearchParams({ url });
+  const searchParams = new URLSearchParams({ url, google_sheet_id: sheetId });
 
   try {
     const response = await fetch(
-      `${config.windmillApiUrl}?${searchParams.toString()}`
+      `${config.apiUrl}/find_contact_page?${searchParams.toString()}`,
+      { signal }
     );
 
     if (!response.ok) {
@@ -22,6 +25,10 @@ export const fetchContactPage = async (
 
     return mapApiResponseToResponse(contactPageApiResponse);
   } catch (error) {
+    if ((error as Error)?.name === AbortError.name) {
+      throw new AbortError();
+    }
+
     throw new NetworkError();
   }
 };

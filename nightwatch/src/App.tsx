@@ -1,7 +1,7 @@
-import { UrlInput } from "./components/UrlInput";
+import { ContactPageScraper } from "./components/ContactPageScraper";
 
 function App() {
-  return <UrlInput />;
+  return <ContactPageScraper />;
 }
 
 export default App;

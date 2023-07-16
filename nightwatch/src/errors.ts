@@ -3,3 +3,9 @@ export class NetworkError extends Error {
     super("NetworkError");
   }
 }
+
+export class AbortError extends Error {
+  constructor() {
+    super("AbortError");
+  }
+}
