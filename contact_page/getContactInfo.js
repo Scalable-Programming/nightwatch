@@ -98,8 +98,6 @@ async function scrapeContactInfo(url) {
 
   const contactURL = await findContactURL(page);
 
-  // Naive approach worked and page with "contact"
-  // route was found
   if (contactURL) {
     try {
       await page.goto(contactURL);
@@ -125,9 +123,6 @@ async function scrapeContactInfo(url) {
   return result;
 }
 
-// Naive way of getting contact page
-// It is not robust, since not all websites will follow this convention
-// of having contact route
 async function findContactURL(page) {
   const contactLink = await page.evaluate((translations) => {
     for (const contactTranslation of translations) {
