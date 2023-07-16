@@ -37,3 +37,11 @@ node index.js
   contact_page: "https://nightwatch.io/contact"
 }
 ```
+
+# Approach
+
+Fetching contact page assumes that page has navigation endpoint which has `contact` word in it.
+Word `contact` is translated into 71 most popular languages and headless browser checks for any link, that might have translated `contact` in it.
+If that link is found then it means that contact page was found. After that we also scrape emails and return found data.
+
+Improved approach could be to only searh for emails, if contact page was not found. It would require to scrape all links from body (`body a` tag) and crawl for emails on each non already visited link.
