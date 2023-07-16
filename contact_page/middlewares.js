@@ -1,7 +1,7 @@
 const TimeoutError = require("./errors");
 
 // 5 mins
-const timeout = 8* 1000;
+const timeout = 5 * 60 * 1000;
 
 function timeoutMiddleware(req, res, next) {
   const timeoutId = setTimeout(() => {
